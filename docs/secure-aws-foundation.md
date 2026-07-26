@@ -1,6 +1,93 @@
 # Secure AWS Foundation
 
 **Source:** Coursework-derived case study, independently rewritten  
+**Status:** Complete analytical case study
+
+## Scenario
+
+A fictional web workload needs a cloud foundation that separates public and private resources, limits identity permissions, protects stored data, supports recovery, and scales under changing demand.
+
+The reviewed coursework included AWS IAM, VPC and subnet construction, web-server deployment, EC2, Lambda, Elastic Beanstalk, EBS, S3, RDS, load balancing, Auto Scaling, and monitoring. Original lab instructions, validation screens, account values, and student-named resources remain private.
+
+## Identity and access management
+
+The IAM exercise demonstrated group-based permission assignment and the practical effect of read-only access. A user inherited permissions through group membership and could view S3 resources without modifying or deleting objects.
+
+The hardened design extends this foundation by:
+
+- Using roles instead of long-lived user access keys where possible
+- Requiring MFA for privileged access
+- Scoping policies to specific actions and resources
+- Reviewing unused identities and permissions
+- Recording administrative activity through CloudTrail
+
+## Network design
+
+The VPC work covered multiple subnets, availability zones, security groups, and a web workload. The public version uses documentation-safe components:
+
+```mermaid
+flowchart TB
+    Internet --> ALB["Public load balancer"]
+    ALB --> AppA["Private application tier<br/>Availability Zone A"]
+    ALB --> AppB["Private application tier<br/>Availability Zone B"]
+    AppA --> DB["Private encrypted database"]
+    AppB --> DB
+    Trail["CloudTrail"] --> Log["Protected log bucket"]
+    VPC["VPC Flow Logs"] --> Monitor["Monitoring and investigation"]
+```
+
+Security controls include:
+
+- Public subnets only for internet-facing load-balancing components
+- Private subnets for application and database tiers
+- Restrictive security-group references between tiers
+- No direct public database exposure
+- VPC flow logging for investigation support
+
+## Data protection
+
+The coursework distinguished S3 object storage from EBS block storage and demonstrated S3 permissions, object access, bucket policy behavior, and versioning.
+
+The data-protection model includes:
+
+- S3 Block Public Access
+- Default encryption
+- Versioning and recovery of a deleted test object
+- Least-privilege bucket access
+- Lifecycle and retention decisions
+- RDS placement and encrypted storage
+
+## Availability and monitoring
+
+The reviewed work included load balancer configuration, launch templates or configurations, Auto Scaling, and predictive monitoring concepts. These components support availability, but they do not replace backup or incident detection.
+
+The monitoring design adds:
+
+- Health checks and scaling validation
+- CloudWatch metrics and alarms
+- CloudTrail event review
+- Cost controls and resource cleanup
+
+## Validation matrix
+
+| Requirement | Positive test | Negative test |
+|---|---|---|
+| Read-only identity | List approved resources | Create, modify, and delete actions are denied |
+| Network segmentation | Reach the application through the load balancer | Direct internet access to app and database tiers fails |
+| S3 recovery | Retrieve a prior version of a fictional object | Anonymous access is denied |
+| Auditability | Locate an administrative event in CloudTrail | Log-bucket mutation is denied to routine operators |
+| Cleanup | Inventory resources and remove billable lab components | No orphaned volumes, addresses, or gateways remain |
+
+## Skills demonstrated
+
+AWS IAM, least privilege, VPC architecture, subnets, security groups, EC2, S3, EBS, RDS, load balancing, Auto Scaling, CloudWatch, resilience, and technical documentation.
+
+## Publication safeguards
+
+No account IDs, ARNs, access keys, student identifiers, original resource names, lab-provider content, or coursework screenshots are included. This case study documents the architecture and validation logic without claiming a current production deployment.
+# Secure AWS Foundation
+
+**Source:** Coursework-derived case study, independently rewritten  
 **Status:** Skills documented; independent account revalidation and sanitized evidence pending
 
 ## Scenario
